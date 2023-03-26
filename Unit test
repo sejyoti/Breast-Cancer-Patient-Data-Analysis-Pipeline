@@ -1,0 +1,41 @@
+import os
+import shutil
+import unittest
+import nextflow.cli
+
+class TestPipeline(unittest.TestCase):
+    def setUp(self):
+        # Set up the base directory for the test run
+        self.base_dir = os.path.abspath('test_run')
+        os.makedirs(self.base_dir, exist_ok=True)
+
+        # Copy the necessary input data to the test directory
+        data_dir = os.path.abspath('data')
+        shutil.copy(os.path.join(data_dir, 'Homo_sapiens.GRCh38.102.gtf'), self.base_dir)
+        shutil.copy(os.path.join(data_dir, 'design.csv'), self.base_dir)
+        os.makedirs(os.path.join(self.base_dir, 'data'), exist_ok=True)
+        for file in os.listdir(os.path.join(data_dir, 'fastq')):
+            shutil.copy(os.path.join(data_dir, 'fastq', file), os.path.join(self.base_dir, 'data'))
+
+    def tearDown(self):
+        # Remove the test directory and its contents
+        shutil.rmtree(self.base_dir)
+
+    def test_pipeline(self):
+        # Run the pipeline using the Nextflow CLI
+        result = nextflow.cli.run('main.nf', '-params-file', 'params_test.config', '-work-dir', os.path.join(self.base_dir, 'work'), '-resume')
+
+        # Check that the pipeline ran successfully
+        self.assertEqual(result.returncode, 0)
+
+        # Check that the expected output files were generated
+        expected_output_files = [
+            'merged_quant',
+            'index_salmon',
+            'sample1_quant/quant.sf',
+            'sample2_quant/quant.sf',
+            'sample3_quant/quant.sf',
+            'sample4_quant/quant.sf'
+        ]
+        for file in expected_output_files:
+            self.assertTrue(os.path.exists(os.path.join(self.base_dir, 'output', file))))
