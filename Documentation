@@ -1,0 +1,32 @@
+Pipeline Steps:
+
+Trimming of input fastq files using Trimmomatic.
+Indexing of reference transcriptome using Salmon.
+Quantification of RNA-seq reads using Salmon.
+Merging of sample-level quantification files using the tximport R package to produce gene-level counts.
+Input Parameters:
+The following input parameters can be specified in the params block of the Nextflow script:
+
+reads: Path to the fastq files to be trimmed.
+gtf: Path to the reference transcriptome GTF file.
+design: Path to the design file.
+Execution:
+To run the pipeline using the Docker executor, modify the Nextflow script by adding the following line at the beginning of the script:
+
+nextflow.enable.dsl=2
+
+This line enables the use of the Docker executor. Then, run the pipeline using the following command:
+
+nextflow run script.nf -profile docker
+
+This command will run the pipeline using the Docker executor.
+
+Output:
+The pipeline produces gene-level counts for each sample in the design file, stored in the file "merged_quant". The intermediate files produced during the pipeline are stored in the "work" directory.
+
+Conclusion:
+This Nextflow pipeline provides a scalable and reproducible way to perform RNA-seq quantification using the Salmon tool. By using the Docker executor, the pipeline can be run on any system with Docker installed, without the need for manual installation of software dependencies.
+
+
+
+
