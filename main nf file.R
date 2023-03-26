@@ -1,7 +1,11 @@
 nextflow {
     // Set the Nextflow version and process executor
     version '20.10.0'
-    executor 'local'
+    executor {
+        docker {
+            enabled = true
+        }
+    }
 
     // Define input parameters
     params.reads = "$baseDir/data/*.fastq.gz"
@@ -100,7 +104,3 @@ nextflow {
             // Run the processes for the sample
             trimmomatic(reads)
             salmon_index(gtf)
-            salmon_quant("${sample_id}_paired.fastq.gz", transcriptome_index)
-        }
-    }
-}
