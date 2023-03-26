@@ -1,0 +1,28 @@
+nextflow {
+    // Define the input parameters
+    params.input_file = file(path: '/path/to/input/file.txt')
+    params.input_dir = "/path/to/input/directory/*"
+
+    // Define the processes
+
+    ...
+
+    // Define the workflow
+    workflow {
+        // Define the processes to run for each input file/directory
+        process {
+            input:
+                file inputFile from params.input_file
+                file inputDir from params.input_dir
+
+            output:
+                file 'output.txt'
+
+            // Run the process on the input file/directory
+            script:
+                """
+                # Script to process input file or files in input directory
+                """
+        }
+    }
+}
